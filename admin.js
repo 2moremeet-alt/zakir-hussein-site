@@ -202,12 +202,86 @@
   }
   function writeLocal(cfg) { try { localStorage.setItem(LS, JSON.stringify(cfg)); } catch (e) {} }
 
+  /* =========================================================
+     الاتصال بـ Supabase (عند تفعيل الربط) + بديل محلي
+     ========================================================= */
+  var LS_TOKEN = 'zh_sb_tok_v1';
+  var SB = (typeof window !== 'undefined' && window.ZH_SB) ? window.ZH_SB : {};
+  function sbReady() { return !!(SB && SB.url && SB.anon); }
+  function sbGetTok() {
+    try {
+      var r = JSON.parse(localStorage.getItem(LS_TOKEN) || 'null');
+      if (r && r.exp > Date.now()) return r.t;
+    } catch (e) { }
+    return null;
+  }
+  function sbSetTok(t) { try { localStorage.setItem(LS_TOKEN, JSON.stringify({ t: t, exp: Date.now() + 3540 * 1000 })); } catch (e) { } }
+  function sbClearTok() { try { localStorage.removeItem(LS_TOKEN); } catch (e) { } }
+  function sbAuthHeaders(json) {
+    var h = { apikey: SB.anon };
+    if (json) h['Content-Type'] = 'application/json';
+    var tok = sbGetTok();
+    if (tok) h['Authorization'] = 'Bearer ' + tok;
+    return h;
+  }
+  function supabaseSignIn(password) {
+    return window.fetch(SB.url + '/auth/v1/token?grant_type=password', {
+      method: 'POST', headers: { apikey: SB.anon, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: SB.adminEmail || 'admin@local', password: password })
+    }).then(function (r) {
+      return r.json().then(function (j) { return { ok: r.ok, j: j }; });
+    });
+  }
+  function supabaseGetConfig() {
+    return window.fetch(SB.url + '/rest/v1/site_config?select=config&id=eq.1', { headers: sbAuthHeaders(true) })
+      .then(function (r) { return r.json(); })
+      .then(function (arr) { if (Array.isArray(arr) && arr[0] && arr[0].config) return arr[0].config; return null; });
+  }
+  function supabaseSave(cfg) {
+    return window.fetch(SB.url + '/rest/v1/site_config', {
+      method: 'POST',
+      headers: { apikey: SB.anon, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal', 'Authorization': 'Bearer ' + sbGetTok() },
+      body: JSON.stringify([{ id: 1, config: cfg }])
+    }).then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); });
+  }
+  function mimeOf(name) {
+    name = String(name || '').toLowerCase();
+    if (name.indexOf('.png') > -1) return 'image/png';
+    if (name.indexOf('.jpg') > -1 || name.indexOf('.jpeg') > -1) return 'image/jpeg';
+    if (name.indexOf('.gif') > -1) return 'image/gif';
+    if (name.indexOf('.webp') > -1) return 'image/webp';
+    if (name.indexOf('.svg') > -1) return 'image/svg+xml';
+    return 'application/octet-stream';
+  }
+  function extOf(name) {
+    name = String(name || '').toLowerCase();
+    var m = name.match(/\.(png|jpe?g|gif|webp|svg)$/);
+    return m ? m[1] : 'png';
+  }
+  function supabaseUpload(arrayBuf, name) {
+    var tok = sbGetTok();
+    if (!tok) return Promise.reject(new Error('no auth'));
+    var ext = extOf(name);
+    var fname = 'img-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7) + '.' + ext;
+    return window.fetch(SB.url + '/storage/v1/object/images/' + fname, {
+      method: 'PUT',
+      headers: { apikey: SB.anon, 'Authorization': 'Bearer ' + tok, 'Content-Type': mimeOf(name) },
+      body: arrayBuf
+    }).then(function (r) { if (!r.ok) throw new Error('upload http ' + r.status); return r.json(); })
+      .then(function () { return SB.url + '/storage/v1/object/public/images/' + fname; });
+  }
+
   function serverGet() {
+    if (sbReady()) return supabaseGetConfig();
     if (!window.fetch) return Promise.reject(new Error('no fetch'));
     return window.fetch('/api/config', { method: 'GET', cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error('bad'); return r.json(); });
   }
   function serverSave(cfg) {
+    if (sbReady()) {
+      if (!sbGetTok()) return Promise.reject(new Error('need login'));
+      return supabaseSave(cfg);
+    }
     if (!window.fetch) return Promise.reject(new Error('no fetch'));
     return window.fetch('/api/config', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -215,29 +289,42 @@
     }).then(function (r) { if (!r.ok) throw new Error('bad'); return r.json(); });
   }
   function connState(cb) {
-    if (!window.fetch) { cb(false); return; }
-    var ctrl = (window.AbortController) ? new AbortController() : null;
-    var to = setTimeout(function () { cb(false); }, 2200);
-    window.fetch('/api/config', { method: 'GET', cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
-      .then(function (r) { clearTimeout(to); cb(r.ok); })
-      .catch(function () { clearTimeout(to); cb(false); });
+    if (!window.fetch) { cb(false, 'no fetch'); return; }
+    var to = setTimeout(function () { cb(false, 'timeout'); }, 2500);
+    if (sbReady()) {
+      window.fetch(SB.url + '/rest/v1/site_config?select=id&id=eq.1', { headers: sbAuthHeaders(true) })
+        .then(function (r) { clearTimeout(to); cb(r.ok, 'sb'); })
+        .catch(function () { clearTimeout(to); cb(false, 'sb'); });
+      return;
+    }
+    window.fetch('/api/config', { method: 'GET', cache: 'no-store' })
+      .then(function (r) { clearTimeout(to); cb(r.ok, 'api'); })
+      .catch(function () { clearTimeout(to); cb(false, 'api'); });
   }
   function setConnUI() {
     var el = qs('#connStatus'); if (!el) return;
     el.className = 'conn';
     el.textContent = '⏳ جاري فحص الاتصال…';
-    connState(function (ok) {
+    connState(function (ok, mode) {
       var e2 = qs('#connStatus'); if (!e2) return;
-      if (ok) { e2.className = 'conn'; e2.textContent = '● متصل بالسيرفر — الحفظ والنشر لكل الزوار'; }
-      else { e2.className = 'conn off'; e2.textContent = '⚠️ بدون سيرفر — التعديلات محلية فقط'; }
+      if (ok && mode === 'sb') { e2.className = 'conn'; e2.textContent = '● متصل بـ Supabase — الحفظ والنشر لكل الزوار'; }
+      else if (ok) { e2.className = 'conn'; e2.textContent = '● متصل بالسيرفر المحلي'; }
+      else { e2.className = 'conn off'; e2.textContent = '⚠️ غير مربوط بـ Supabase — التعديلات محلية (تابع دليل الربط)'; }
     });
   }
   function uploadImageFile(file) {
     return new Promise(function (resolve, reject) {
-      var rd = new FileReader();
-      rd.onerror = function () { reject(new Error('read error')); };
-      rd.onload = function () {
-        var data = String(rd.result);
+      if (sbReady()) {
+        var rd = new FileReader();
+        rd.onerror = function () { reject(new Error('read error')); };
+        rd.onload = function () { supabaseUpload(rd.result, file.name || 'img.png').then(resolve).catch(reject); };
+        rd.readAsArrayBuffer(file);
+        return;
+      }
+      var rd2 = new FileReader();
+      rd2.onerror = function () { reject(new Error('read error')); };
+      rd2.onload = function () {
+        var data = String(rd2.result);
         if (!window.fetch) { reject(new Error('no server')); return; }
         window.fetch('/api/upload', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -246,7 +333,7 @@
           .then(function (j) { if (j && j.ok) resolve(j.url); else reject(new Error((j && j.error) || 'upload fail')); })
           .catch(reject);
       };
-      rd.readAsDataURL(file);
+      rd2.readAsDataURL(file);
     });
   }
 
@@ -760,8 +847,9 @@
       },
       { id: 'sec', html:
         '<h4 class="sec">🔒 كلمة مرور لوحة التحكم</h4>' +
-        fieldHtml('security.password', 'كلمة المرور', cfg.security.password, 'text', 'غيّرها ثم "حفظ وتطبيق". فتح اللوحة = 5 ضغطات على سطر الحقوق أسفل الموقع.') +
-        '<div class="f-row"><div class="hint">⚠️ كلمة المرور والتعديلات كلها بتتحفظ على السيرفر، فمتنسهاش.</div></div>'
+        fieldHtml('security.password', 'كلمة المرور المحلية (قبل ربط Supabase)', cfg.security.password, 'text', 'مؤقتة فقط لو الموقع مش مربوط بـ Supabase بعد.') +
+        '<div class="f-row"><div class="hint">🔌 <b>عند الربط بـ Supabase:</b> الدخول للوحة = باسورد حساب المدير اللي أنشأتيه في Supabase Auth (5 ضغطات على سطر الحقوق ثم الباسورد ده).</div></div>' +
+        '<div class="f-row"><div class="hint" id="sbStatusLine">⚠️ حالة الربط: غير مربوط بعد — ابعتلي رابط المشروع و anon key عشان أكمّل الربط، أو اتبعي دليل Supabase.</div></div>'
       },
       { id: 'foot', html:
         '<h4 class="sec">قسم تواصل معنا الأخير (قبل الفوتر)</h4>' +
@@ -811,6 +899,11 @@
     activate(activeTab);
 
     setConnUI();
+    var sbline = qs('#sbStatusLine');
+    if (sbline) {
+      if (sbReady()) sbline.innerHTML = '🟢 <b>مربوط بـ Supabase:</b> ' + esc(SB.url);
+      else sbline.innerHTML = '🟠 <b>غير مربوط بعد.</b> عشان تخزين التعديلات والصور للجميع، ابعتلي (Project URL + anon key) وأنا أربطها، أو اتبع دليل Supabase.';
+    }
     buildEditors(cfg);
     var lo = qs('#logoUpBtn');
     if (lo) lo.addEventListener('click', function () {
@@ -880,16 +973,38 @@
     var er = qs('#pwErr'); if (er) er.textContent = '';
   }
   function gateClose() { var g = qs('#pwGate'); if (g) g.classList.remove('open'); }
+  function gateFail(msg) {
+    var er = qs('#pwErr'); if (er) er.textContent = msg;
+    var card = qs('#pwCard');
+    if (card) { card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
+    var inp = qs('#pwIn'); if (inp) { inp.select(); inp.focus(); }
+  }
   function gateTry() {
     var inp = qs('#pwIn');
-    var pass = (cur && cur.security && cur.security.password) ? cur.security.password : '0000';
-    if (inp && inp.value === pass) { gateClose(); openUI(cur); }
-    else {
-      var er = qs('#pwErr'); if (er) er.textContent = 'كلمة المرور غير صحيحة، حاول تاني';
-      var card = qs('#pwCard');
-      if (card) { card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
-      if (inp) { inp.select(); inp.focus(); }
+    var btn = qs('#pwOpen');
+    if (!sbReady()) {
+      // الوضع المحلي (قبل الربط بـ Supabase): مقارنة بكلمة المرور المحفوظة
+      var pass = (cur && cur.security && cur.security.password) ? cur.security.password : '0000';
+      if (inp && inp.value === pass) { gateClose(); openUI(cur); }
+      else { gateFail('كلمة المرور غير صحيحة، حاول تاني'); }
+      return;
     }
+    // الوضع المتصل بـ Supabase: تسجيل دخول حقيقي لحساب المدير
+    var orig = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ جاري التحقق…'; }
+    supabaseSignIn(inp ? inp.value : '').then(function (r) {
+      if (r.ok && r.j && r.j.access_token) {
+        sbSetTok(r.j.access_token);
+        gateClose();
+        openUI(cur);
+      } else {
+        gateFail('كلمة المرور غير صحيحة، حاول تاني');
+      }
+    }).catch(function () {
+      gateFail('تعذر الاتصال بـ Supabase — تأكد من الربط أو الإنترنت');
+    }).then(function () {
+      if (btn) { btn.disabled = false; btn.textContent = orig; }
+    });
   }
   function armSecret() {
     var zone = qs('.foot-bottom');
