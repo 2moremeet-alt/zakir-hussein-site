@@ -1,0 +1,14 @@
+{
+  "name": "zakir-hussein-car-repair-site",
+  "version": "2.0.0",
+  "description": "موقع مركز صيانة ذاكر حسين — صيانة سيارات في مدينة نصر (لوحة تحكم + رفع صور)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}
