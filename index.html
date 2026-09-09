@@ -426,6 +426,51 @@ footer{background:#060402;color:#ACA38F;border-top:1px solid var(--line)}
 .adm-toast.show{opacity:1}
 @media(min-width:900px){.adm-panel{height:88vh;max-width:980px;margin:auto;inset:6vh auto 0;border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.7)}}
 
+
+/* ============ قسم العروض ============ */
+.offers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:22px;margin-top:42px}
+.of-card{background:#fff;border:1px solid #E7ECF2;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:.3s;box-shadow:0 4px 14px rgba(10,8,4,.05)}
+.of-card:hover{transform:translateY(-7px);box-shadow:0 22px 44px rgba(10,8,4,.14);border-color:transparent}
+.of-media{position:relative;aspect-ratio:4/3;overflow:hidden;background:radial-gradient(circle at 30% 20%,rgba(179,9,6,.14),transparent 55%),linear-gradient(150deg,#18110B,#0D0A06)}
+.of-media img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:.4s}
+.of-card:hover .of-media img{transform:scale(1.06)}
+.of-cap{padding:17px 17px 18px;display:flex;flex-direction:column;gap:9px;flex:1}
+.of-cap h3{font-size:1.08rem;font-weight:800;color:var(--ink);line-height:1.5}
+.of-cap .of-txt{color:var(--mut2);font-size:.92rem;line-height:1.85;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:0}
+.of-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:8px}
+.of-btns .btn{padding:10px 12px;font-size:.85rem;border-radius:11px;line-height:1.5}
+.of-order{flex:1.2;min-width:120px}
+.of-details{flex:1;min-width:100px}
+.of-fb{width:100%;background:#1A1F29;color:#fff;border:1px solid rgba(255,255,255,.14)}
+.of-fb:hover{background:#1877F2;color:#fff;transform:translateY(-1px)}
+.of-fb svg{width:16px;height:16px}
+.offers-empty{border:2px dashed rgba(179,9,6,.35);border-radius:18px;padding:38px 20px;margin-top:40px;text-align:center;color:#7B6A52;font-weight:800;background:rgba(244,186,53,.05)}
+
+/* ============ النوافذ المنبثقة (عروض) ============ */
+.zhmodal-wrap{position:fixed;inset:0;z-index:140;display:none;align-items:center;justify-content:center;padding:16px;font-family:'Cairo',inherit}
+.zhmodal-wrap.open{display:flex}
+.zhmodal-ov{position:absolute;inset:0;background:rgba(5,3,2,.72);backdrop-filter:blur(4px)}
+.zhmodal-card{position:relative;background:#fff;color:var(--ink);width:min(540px,100%);max-height:90vh;overflow:auto;border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.55);animation:zhIn .28s ease}
+@keyframes zhIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.zh-x{position:absolute;top:12px;left:12px;z-index:3;width:38px;height:38px;border-radius:50%;border:none;background:rgba(255,255,255,.92);color:#111;font-size:1.15rem;font-weight:900;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.zh-x:hover{background:var(--brand);color:#fff}
+.zh-pad{padding:26px 26px 28px}
+.zh-media{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:radial-gradient(circle at 30% 20%,rgba(179,9,6,.16),transparent 60%),#14100B}
+.zh-media img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.zh-title{font-size:1.5rem;font-weight:900;color:var(--ink);margin:18px 0 6px;line-height:1.5;padding:0 26px}
+.zh-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(179,9,6,.1);color:var(--brand);font-weight:800;font-size:.8rem;padding:4px 12px;border-radius:999px;margin:0 26px 14px}
+.zh-body{padding:4px 26px 10px;color:#4a4236;font-size:.98rem;line-height:2;white-space:pre-line}
+.zh-act{padding:8px 26px 24px;display:flex;gap:10px;flex-wrap:wrap}
+.zh-act .btn{padding:12px 16px;font-size:.95rem;border-radius:12px}
+.form-c{margin-bottom:13px}
+.form-c label{display:block;font-weight:800;font-size:.85rem;color:#4a4236;margin-bottom:5px}
+.form-c input,.form-c textarea{width:100%;background:#fff;border:1.6px solid #E2D9C6;border-radius:12px;color:#201811;font-family:inherit;font-size:1rem;padding:12px 14px;outline:none;transition:.2s}
+.form-c input:focus,.form-c textarea:focus{border-color:#8A6100}
+.form-c .fxd{background:#F7F1E0;border-color:#EFE4C8;color:#6f6250;font-weight:800}
+.zf-err{color:#c62828;font-weight:800;font-size:.88rem;min-height:1.4em}
+.zf-note{background:#F3FBF5;border:1px solid #CFEBD8;color:#177245;border-radius:12px;padding:11px 14px;font-size:.85rem;font-weight:700;line-height:1.9;margin:4px 0 14px}
+@media(max-width:560px){.zh-pad{padding:20px 16px 22px}.zh-title{font-size:1.25rem;padding:0 16px}.zh-tag{margin:0 16px 12px}.zh-body{padding:0 16px 8px}.zh-act{padding:6px 16px 20px}}
+
 </style>
 </head>
 <body>
@@ -461,6 +506,7 @@ footer{background:#060402;color:#ACA38F;border-top:1px solid var(--line)}
     </a>
     <nav class="menu" id="menu" aria-label="القائمة الرئيسية">
       <a href="#services">خدماتنا</a>
+      <a href="#offers">العروض</a>
       <a href="#installments">التقسيط</a>
       <a href="#why">لماذا نحن</a>
       <a href="#gallery">معرض الصور</a>
@@ -627,6 +673,17 @@ footer{background:#060402;color:#ACA38F;border-top:1px solid var(--line)}
       <p id="instCta">💳 <b>اختار شركة التقسيط اللي تناسبك وسيب الباقي علينا</b> — احنا بنجهز كل حاجة ليك.</p>
       <a data-wa="1" href="https://wa.me/201050006620" target="_blank" rel="noopener" class="btn btn-wa">اسأل عن تفاصيل التقسيط</a>
     </div>
+  </div>
+</section>
+
+<!-- ================= العروض ================= -->
+<section class="section" id="offers">
+  <div class="container">
+    <span class="eyebrow" id="oEyebrow">عروضنا</span>
+    <h2 class="section-title" id="oTitle">عروض وخصومات العرض</h2>
+    <p class="section-sub" id="oSub">اطلب العرض مباشرة أو اسأل عن التفاصيل كاملة — الباقي علينا.</p>
+    <div class="offers-grid" id="offersGrid"></div>
+    <div id="offersEmpty" class="offers-empty" style="display:none"></div>
   </div>
 </section>
 
@@ -851,6 +908,12 @@ footer{background:#060402;color:#ACA38F;border-top:1px solid var(--line)}
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.07a8.2 8.2 0 0 1-2.4-1.5 9 9 0 0 1-1.66-2.07c-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.9 1.22 3.1.15.2 2.1 3.2 5.1 4.49.71.3 1.27.49 1.7.63.72.23 1.37.2 1.88.12.58-.09 1.76-.72 2-1.42.25-.7.25-1.3.18-1.42-.07-.12-.27-.2-.57-.35zM12.05 21.8h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.9-9.88a9.83 9.83 0 0 1 7 2.9 9.83 9.83 0 0 1 2.89 7 9.9 9.9 0 0 1-9.9 9.87zM20.5 3.5A11.8 11.8 0 0 0 12.04 0C5.5 0 .16 5.33.16 11.89c0 2.1.55 4.14 1.59 5.94L.06 24l6.33-1.66a11.9 11.9 0 0 0 5.66 1.44h.01c6.6 0 11.94-5.33 11.94-11.9 0-3.18-1.24-6.16-3.5-8.4z"/></svg>
 </a>
 
+<!-- نوافذ العروض (تفاصيل + طلب) -->
+<div id="zhModalWrap" class="zhmodal-wrap" aria-hidden="true">
+  <div class="zhmodal-ov" data-zhclose="1"></div>
+  <div class="zhmodal-card" id="zhModalCard"></div>
+</div>
+
 <!-- Admin: مخفي — اضغط ٥ مرات على سطر الحقوق أسفل الموقع ثم أدخل كلمة المرور -->
 <div id="pwGate" aria-hidden="true">
   <div class="pw-ov"></div>
@@ -1011,6 +1074,7 @@ window.ZH_SB = {
   var IC_PIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
   var IC_WRENCH = '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>';
   var STRIP_ICONS = [IC_LOCK, IC_STAR, IC_CARD, IC_PIN, IC_WRENCH];
+  var IC_IMG = '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
 
   /* =========================================================
      التصور الافتراضي الكامل
@@ -1080,6 +1144,15 @@ window.ZH_SB = {
         sub: 'صور من أعمالنا وعروض الزيوت والقطع المتوفرة لدى المركز.',
         note: '📸 تفضل تتفرج على صور من أعمالنا — جديدنا بينزل باستمرار.',
         items: []
+      },      offers: {
+        eyebrow: 'عروضنا',
+        title: 'عروض وخصومات 🔥',
+        sub: 'اختر العرض المناسب، شوف تفاصيله كاملة واطلبه في ثواني.',
+        items: [
+          { title: 'عرض تغيير الزيت والفلاتر', desc: 'خصم خاص على تغيير الزيت والفلاتر بزيوت عالمية أصلية.', details: 'يشمل العرض:\n- تغيير زيت المحرك بزيت عالمي أصلي.\n- تغيير فلتر الزيت.\n- فحص سريع مجاني للسيارة.\n\nالعرض ساري لفترة محدودة — اطلبه دلوقتي وسيب الباقي علينا.', img: '', fb: '' },
+          { title: 'عرض فحص العفشة بالكمبيوتر', desc: 'افحص العفشة كاملة واعرف أي مشكلة قبل ما تتصلح.', details: 'يشمل العرض:\n- كشف أعطال شامل بالكمبيوتر.\n- فحص العفشة والتعليق.\n- تقرير واضح بالحالة قبل أي إصلاح.\n\nكلمنا على الواتساب للمزيد.', img: '', fb: '' },
+          { title: 'عرض الصيانة الشاملة', desc: 'باقة صيانة شاملة لكل سيارة بسعر خاص.', details: 'يشمل العرض:\n- ميكانيكا + فحص شامل.\n- زيوت وفلاتر أصلية.\n- تخفيض على قطع الغيار.\n\nاسأل عن التفاصيل كاملة من زر الطلب.', img: '', fb: '' }
+        ]
       },
       strip: {
         items: [
@@ -1108,7 +1181,7 @@ window.ZH_SB = {
       footer: { madeBy: 'صنع بواسطة @Memaa388' },
       colors: { gold: '#F4BA35', brand: '#B30906', dark: '#0C0A06' },
       security: { password: '0000' },
-      show: { strip: true, services: true, why: true, inst: true, gallery: true, location: true, cta: true, banner: true }
+      show: { strip: true, offers: true, services: true, why: true, inst: true, gallery: true, location: true, cta: true, banner: true }
     };
   }
 
@@ -1363,6 +1436,128 @@ window.ZH_SB = {
     rs.setProperty('--offTxt', b.txt || '#FFE9A8');
     rs.setProperty('--offSpeed', (b.speed || 24) + 's');
   }
+  function renderOffers(cfg) {
+    var grid = qs('#offersGrid'); if (!grid) return;
+    var items = (cfg.offers && cfg.offers.items) ? cfg.offers.items : [];
+    var empty = qs('#offersEmpty');
+    if (empty) {
+      if (!items.length) { empty.style.display = 'block'; empty.innerHTML = '➕ أضف أول عرض من لوحة التحكم — (5 ضغطات على سطر الحقوق أسفل الموقع)'; }
+      else empty.style.display = 'none';
+    }
+    grid.innerHTML = items.map(function (it, i) {
+      var media;
+      if (it.img && String(it.img).trim()) {
+        media = '<img src="' + esc(it.img) + '" alt="' + esc(it.title || '') + '" loading="lazy">';
+      } else {
+        media = '<div class="ph">' + IC_IMG + '<b>صورة العرض هنا</b><span>أضف صورة من لوحة التحكم</span></div>';
+      }
+      var fb = (it.fb && String(it.fb).trim() && String(it.fb) !== '#')
+        ? '<a class="btn of-fb" href="' + esc(it.fb) + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg> شوف العرض على فيسبوك</a>'
+        : '';
+      return '<figure class="of-card" data-reveal>' +
+        '<div class="of-media gal-media">' + media + '</div>' +
+        '<figcaption class="of-cap">' +
+        '<h3>' + esc(it.title || '') + '</h3>' +
+        (it.desc ? '<div class="of-txt">' + esc(it.desc) + '</div>' : '') +
+        '<div class="of-btns">' +
+          '<button type="button" class="btn btn-primary of-order" data-i="' + i + '">🛒 اطلب العرض</button>' +
+          '<button type="button" class="btn btn-outline of-details" data-i="' + i + '">التفاصيل الكاملة</button>' +
+          fb +
+        '</div></figcaption></figure>';
+    }).join('');
+    // ربط أزرار كل بطاقة
+    qsa('#offersGrid .of-order').forEach(function (b) { b.addEventListener('click', function () { zhOpenOrder(Number(b.getAttribute('data-i'))); }); });
+    qsa('#offersGrid .of-details').forEach(function (b) { b.addEventListener('click', function () { zhOpenDetails(Number(b.getAttribute('data-i'))); }); });
+    observeReveal();
+  }
+  function zhModalOpen(html) {
+    var wrap = qs('#zhModalWrap'), card = qs('#zhModalCard');
+    if (!wrap || !card) return;
+    card.innerHTML = html;
+    wrap.classList.add('open');
+    wrap.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    // ربط إغلاق
+    qsa('#zhModalWrap [data-zhclose]').forEach(function (el) {
+      el.addEventListener('click', zhModalClose);
+    });
+    qsa('#zhModalWrap [data-zhorder]').forEach(function (el) {
+      el.addEventListener('click', function () { zhOpenOrder(Number(el.getAttribute('data-zhorder'))); });
+    });
+  }
+  function zhModalClose() {
+    var wrap = qs('#zhModalWrap');
+    if (wrap) { wrap.classList.remove('open'); wrap.setAttribute('aria-hidden', 'true'); }
+    document.body.style.overflow = '';
+  }
+  function zhModalHtml(inner) {
+    return '<button type="button" class="zh-x" data-zhclose="1" aria-label="إغلاق">✕</button>' + inner;
+  }
+  function zhOpenDetails(i) {
+    var items = (CUR && CUR.offers && CUR.offers.items) || [];
+    var it = items[i]; if (!it) return;
+    var media = (it.img && String(it.img).trim())
+      ? '<div class="zh-media"><img src="' + esc(it.img) + '" alt="' + esc(it.title || '') + '"></div>'
+      : '<div class="zh-media"></div>';
+    var det = esc(it.details || it.desc || '');
+    var fb = (it.fb && String(it.fb).trim() && String(it.fb) !== '#')
+      ? '<a class="btn of-fb" style="width:auto" href="' + esc(it.fb) + '" target="_blank" rel="noopener">شوف العرض على فيسبوك</a>' : '';
+    var html = zhModalHtml(media +
+      '<div class="zh-title">' + esc(it.title || '') + '</div>' +
+      '<span class="zh-tag">✨ عرض خاص</span>' +
+      '<div class="zh-body">' + det + '</div>' +
+      '<div class="zh-act">' +
+        '<button type="button" class="btn btn-primary" data-zhorder="' + i + '">🛒 اطلب هذا العرض</button>' +
+        fb +
+      '</div>');
+    zhModalOpen(html);
+  }
+  function zhOpenOrder(i) {
+    var items = (CUR && CUR.offers && CUR.offers.items) || [];
+    var it = items[i]; if (!it) return;
+    var title = it.title || 'العرض';
+    var html = zhModalHtml('<div class="zh-pad">' +
+      '<h3 style="font-size:1.3rem;font-weight:900;color:var(--ink);margin-bottom:4px">🛒 اطلب العرض</h3>' +
+      '<p style="color:#6f6250;font-size:.95rem;margin-bottom:16px">املأ بياناتك ورسالتك هتوصلك جاهزة على واتساب.</p>' +
+      '<div class="zf-note">⚠️ هتفتح لك نافذة واتساب فيها الطلب جاهز — اضغط إرسال وبس.</div>' +
+      '<div class="form-c"><label>العرض المطلوب</label><input class="fxd" type="text" id="zfOffer" value="' + esc(title) + '" readonly></div>' +
+      '<div class="form-c"><label>الاسم *</label><input type="text" id="zfName" placeholder="اكتب اسمك الكامل"></div>' +
+      '<div class="form-c"><label>رقم الهاتف *</label><input type="tel" id="zfPhone" placeholder="01xxxxxxxxx" dir="ltr" style="text-align:left"></div>' +
+      '<div class="form-c"><label>العنوان</label><input type="text" id="zfAddr" placeholder="المدينة - المنطقة - التفاصيل"></div>' +
+      '<div class="zf-err" id="zfErr"></div>' +
+      '<button type="button" class="btn btn-wa" id="zfSend" style="width:100%;padding:14px">إرسال الطلب عبر واتساب</button>' +
+      '</div>');
+    zhModalOpen(html);
+    var send = qs('#zfSend');
+    if (send) send.addEventListener('click', function () {
+      var name = qs('#zfName').value.trim();
+      var phone = qs('#zfPhone').value.replace(/[^0-9]/g, '');
+      var addr = qs('#zfAddr').value.trim();
+      var offer = (qs('#zfOffer').value || title).trim();
+      var err = qs('#zfErr');
+      if (!name) { err.textContent = 'اكتب اسمك من فضلك'; return; }
+      if (phone.length < 10) { err.textContent = 'اكتب رقم هاتف صحيح (11 رقم)'; return; }
+      err.textContent = '';
+      var brandName = (CUR && CUR.brand && CUR.brand.name) ? CUR.brand.name : 'مركز صيانة ذاكر حسين';
+      var msg = '📦 طلب عرض جديد — ' + brandName + '\n' +
+        'العرض المطلوب: ' + offer + '\n' +
+        'الاسم: ' + name + '\n' +
+        'رقم الهاتف: ' + phone + '\n' +
+        (addr ? 'العنوان: ' + addr + '\n' : '');
+      var phRaw = (CUR && CUR.contact && (CUR.contact.wa || CUR.contact.phone1)) || '01050006620';
+      var ph = String(phRaw).replace(/[^0-9]/g, '');
+      if (ph.indexOf('0') === 0) ph = '2' + ph; else if (ph.indexOf('2') !== 0) ph = '2' + ph;
+      var url = 'https://wa.me/' + ph + '?text=' + encodeURIComponent(msg);
+      var a = document.createElement('a');
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+      document.body.appendChild(a); a.click(); a.remove();
+      zhModalClose();
+    });
+  }
+  function zhBindEsc() {
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') zhModalClose(); });
+  }
+
   function setPhones(cfg) {
     var p1 = cfg.contact.phone1 || '', p2 = cfg.contact.phone2 || '';
     function put(a, n) {
@@ -1398,6 +1593,7 @@ window.ZH_SB = {
      ========================================================= */
   function apply(cfg) {
     var c = cfg || {};
+    CUR = c;
     var colors = c.colors || {};
     var gold = colors.gold || '#F4BA35', brand = colors.brand || '#B30906', dark = colors.dark || '#0C0A06';
     var rs = document.documentElement.style;
@@ -1478,6 +1674,8 @@ window.ZH_SB = {
     if (icta) icta.innerHTML = '💳 <b>' + esc(im.ctaB || '') + '</b>' + esc(im.ctaTail || '');
     var g = c.gallery || {};
     setTxt(qs('#gEyebrow'), g.eyebrow || ''); setTxt(qs('#gTitle'), g.title || ''); setTxt(qs('#gSub'), g.sub || '');
+    var of = c.offers || {};
+    setTxt(qs('#oEyebrow'), of.eyebrow || ''); setTxt(qs('#oTitle'), of.title || ''); setTxt(qs('#oSub'), of.sub || '');
     var lc = c.location || {};
     setTxt(qs('#lEyebrow'), lc.eyebrow || ''); setTxt(qs('#locTitle'), lc.title || '');
     setTxt(qs('#locSub'), lc.sub || '');
@@ -1485,7 +1683,7 @@ window.ZH_SB = {
     setTxt(qs('#ctaTitle'), ct.title || ''); setTxt(qs('#ctaP'), ct.p || '');
 
     /* ---- المحتوى الديناميكي ---- */
-    renderServices(c); renderWhy(c); renderInst(c); renderGallery(c); renderStrip(c); renderBanner(c);
+    renderServices(c); renderWhy(c); renderInst(c); renderGallery(c); renderOffers(c); renderStrip(c); renderBanner(c);
 
     /* ---- جهات الاتصال ---- */
     setPhones(c);
@@ -1504,7 +1702,7 @@ window.ZH_SB = {
     setTxt(qs('#madeByTxt'), (c.footer || {}).madeBy || '');
 
     /* ---- إظهار/إخفاء الأقسام ---- */
-    var secs = { strip: '.strip', services: '#services', why: '#why', inst: '#installments', gallery: '#gallery', location: '#location', cta: '#contact' };
+    var secs = { strip: '.strip', services: '#services', offers: '#offers', why: '#why', inst: '#installments', gallery: '#gallery', location: '#location', cta: '#contact' };
     Object.keys(secs).forEach(function (k) {
       var el = qs(secs[k]);
       if (el) el.style.display = (c.show && c.show[k] === false) ? 'none' : '';
@@ -1518,6 +1716,7 @@ window.ZH_SB = {
   var root = null;
   var activeTab = 'data';
   var cur = null;
+  var CUR = null;
 
   function fieldHtml(fk, label, value, type, hint) {
     type = type || 'text';
@@ -1553,7 +1752,8 @@ window.ZH_SB = {
     { id: 'edWhy', fk: 'why.items', title: 'نقاط لماذا نحن', cols: [['title', 'العنوان', 'text'], ['desc', 'الوصف', 'area']], icon: true },
     { id: 'edInst', fk: 'inst.items', title: 'شركات التقسيط', cols: [['main', 'اسم الشركة', 'text'], ['sub', 'اسم إضافي (اختياري)', 'text']], icon: false },
     { id: 'edGal', fk: 'gallery.items', title: 'صور المعرض', cols: [['title', 'عنوان الصورة', 'text'], ['img', 'رابط الصورة', 'text']], icon: false, upload: true },
-    { id: 'edStrip', fk: 'strip.items', title: 'عناصر شريط المميزات', cols: [['t', 'النص الرئيسي', 'text'], ['s', 'النص الصغير', 'text']], icon: true }
+    { id: 'edStrip', fk: 'strip.items', title: 'عناصر شريط المميزات', cols: [['t', 'النص الرئيسي', 'text'], ['s', 'النص الصغير', 'text']], icon: true },
+    { id: 'edOffers', fk: 'offers.items', title: 'العروض', single: true, upload: true, cols: [['title', 'اسم العرض', 'text'], ['desc', 'وصف مختصر يظهر في البطاقة', 'area'], ['details', 'التفاصيل الكاملة (تظهر في نافذة التفاصيل)', 'area'], ['img', 'رابط صورة العرض', 'text'], ['fb', 'رابط عرض الفيسبوك (زر شوف على فيسبوك)', 'text']] }
   ];
 
   function rowHtml(def, it, idx) {
@@ -1568,10 +1768,11 @@ window.ZH_SB = {
     });
     var icon = (def.icon && it && it.icon) ? it.icon : '';
     var up = (def.upload) ? '<div class="row-upload"><button type="button" class="ed-add row-up">📤 رفع صورة من جهازك</button><span class="up-st"></span></div>' : '';
+    var bodyWrap = def.single ? '<div class="fcolwrap">' + cols + '</div>' : '<div class="two">' + cols + '</div>';
     return '<div class="ed-row" data-idx="' + idx + '">' +
       '<button type="button" class="del" title="حذف">✕</button>' +
       (def.icon ? '<input type="hidden" data-col="icon" value="' + esc(icon) + '">' : '') +
-      '<div class="two">' + cols + '</div>' + up + '</div>';
+      bodyWrap + up + '</div>';
   }
   function buildEditors(cfg) {
     LIST_DEFS.forEach(function (def) {
@@ -1644,7 +1845,7 @@ window.ZH_SB = {
   function tabsHtml() {
     var tabs = [
       ['data', 'بيانات أساسية'], ['hero', 'الواجهة'], ['services', 'الخدمات'],
-      ['why', 'لماذا نحن'], ['inst', 'التقسيط'], ['promo', 'الإعلانات والشرائط'],
+      ['why', 'لماذا نحن'], ['inst', 'التقسيط'], ['offers', 'العروض 🔥'], ['promo', 'الإعلانات والشرائط'],
       ['gallery', 'المعرض'], ['loc', 'الموقع والخريطة'], ['appear', 'الألوان والأقسام'],
       ['sec', 'الأمان'], ['foot', 'الفوتر']
     ];
@@ -1743,6 +1944,14 @@ window.ZH_SB = {
         fieldHtml('inst.ctaTail', 'الجزء التكميلي', cfg.inst.ctaTail) +
         '<h4 class="sec">شركات التقسيط</h4><div id="edInst"></div>'
       },
+      { id: 'offers', html:
+        '<h4 class="sec">عنوان قسم العروض (على الموقع)</h4>' +
+        fieldHtml('offers.eyebrow', 'الشارة', cfg.offers.eyebrow) +
+        fieldHtml('offers.title', 'عنوان القسم', cfg.offers.title) +
+        fieldHtml('offers.sub', 'الوصف', cfg.offers.sub, 'area') +
+        '<div class="f-row"><div class="hint">🔥 <b>إزاي القسم شغال؟</b> كل عرض له: صورة، وصف مختصر في البطاقة، تفاصيل كاملة (تظهر في نافذة "التفاصيل الكاملة")، رابط فيسبوك (زر "شوف العرض على فيسبوك"). زر "اطلب العرض" بيفتح نموذج (اسم + هاتف + عنوان) ويرسلها واتساب للرقم الموجود في تبويب "بيانات أساسية".</div></div>' +
+        '<div id="edOffers"></div>'
+      },
       { id: 'promo', html:
         '<h4 class="sec">🎁 بنر العروض المتحرك (أعلى الموقع)</h4>' +
         fieldHtml('banner.show', 'إظهار البنر', cfg.banner.show !== false, 'chk') +
@@ -1787,6 +1996,7 @@ window.ZH_SB = {
         fieldHtml('colors.dark', 'الخلفيات الداكنة', cfg.colors.dark, 'color') +
         '<h4 class="sec">إظهار / إخفاء الأقسام</h4>' +
         fieldHtml('show.strip', 'شريط المميزات', cfg.show.strip !== false, 'chk') +
+        fieldHtml('show.offers', 'قسم العروض 🔥', cfg.show.offers !== false, 'chk') +
         fieldHtml('show.services', 'قسم الخدمات', cfg.show.services !== false, 'chk') +
         fieldHtml('show.why', 'قسم لماذا نحن', cfg.show.why !== false, 'chk') +
         fieldHtml('show.inst', 'قسم التقسيط', cfg.show.inst !== false, 'chk') +
@@ -1982,6 +2192,7 @@ window.ZH_SB = {
   }
   function boot() {
     try {
+      zhBindEsc();
       root = qs('#adminRoot');
       armSecret();
       cur = localCfg();

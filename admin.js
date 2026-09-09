@@ -61,6 +61,7 @@
   var IC_PIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
   var IC_WRENCH = '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>';
   var STRIP_ICONS = [IC_LOCK, IC_STAR, IC_CARD, IC_PIN, IC_WRENCH];
+  var IC_IMG = '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
 
   /* =========================================================
      التصور الافتراضي الكامل
@@ -130,6 +131,15 @@
         sub: 'صور من أعمالنا وعروض الزيوت والقطع المتوفرة لدى المركز.',
         note: '📸 تفضل تتفرج على صور من أعمالنا — جديدنا بينزل باستمرار.',
         items: []
+      },      offers: {
+        eyebrow: 'عروضنا',
+        title: 'عروض وخصومات 🔥',
+        sub: 'اختر العرض المناسب، شوف تفاصيله كاملة واطلبه في ثواني.',
+        items: [
+          { title: 'عرض تغيير الزيت والفلاتر', desc: 'خصم خاص على تغيير الزيت والفلاتر بزيوت عالمية أصلية.', details: 'يشمل العرض:\n- تغيير زيت المحرك بزيت عالمي أصلي.\n- تغيير فلتر الزيت.\n- فحص سريع مجاني للسيارة.\n\nالعرض ساري لفترة محدودة — اطلبه دلوقتي وسيب الباقي علينا.', img: '', fb: '' },
+          { title: 'عرض فحص العفشة بالكمبيوتر', desc: 'افحص العفشة كاملة واعرف أي مشكلة قبل ما تتصلح.', details: 'يشمل العرض:\n- كشف أعطال شامل بالكمبيوتر.\n- فحص العفشة والتعليق.\n- تقرير واضح بالحالة قبل أي إصلاح.\n\nكلمنا على الواتساب للمزيد.', img: '', fb: '' },
+          { title: 'عرض الصيانة الشاملة', desc: 'باقة صيانة شاملة لكل سيارة بسعر خاص.', details: 'يشمل العرض:\n- ميكانيكا + فحص شامل.\n- زيوت وفلاتر أصلية.\n- تخفيض على قطع الغيار.\n\nاسأل عن التفاصيل كاملة من زر الطلب.', img: '', fb: '' }
+        ]
       },
       strip: {
         items: [
@@ -158,7 +168,7 @@
       footer: { madeBy: 'صنع بواسطة @Memaa388' },
       colors: { gold: '#F4BA35', brand: '#B30906', dark: '#0C0A06' },
       security: { password: '0000' },
-      show: { strip: true, services: true, why: true, inst: true, gallery: true, location: true, cta: true, banner: true }
+      show: { strip: true, offers: true, services: true, why: true, inst: true, gallery: true, location: true, cta: true, banner: true }
     };
   }
 
@@ -413,6 +423,128 @@
     rs.setProperty('--offTxt', b.txt || '#FFE9A8');
     rs.setProperty('--offSpeed', (b.speed || 24) + 's');
   }
+  function renderOffers(cfg) {
+    var grid = qs('#offersGrid'); if (!grid) return;
+    var items = (cfg.offers && cfg.offers.items) ? cfg.offers.items : [];
+    var empty = qs('#offersEmpty');
+    if (empty) {
+      if (!items.length) { empty.style.display = 'block'; empty.innerHTML = '➕ أضف أول عرض من لوحة التحكم — (5 ضغطات على سطر الحقوق أسفل الموقع)'; }
+      else empty.style.display = 'none';
+    }
+    grid.innerHTML = items.map(function (it, i) {
+      var media;
+      if (it.img && String(it.img).trim()) {
+        media = '<img src="' + esc(it.img) + '" alt="' + esc(it.title || '') + '" loading="lazy">';
+      } else {
+        media = '<div class="ph">' + IC_IMG + '<b>صورة العرض هنا</b><span>أضف صورة من لوحة التحكم</span></div>';
+      }
+      var fb = (it.fb && String(it.fb).trim() && String(it.fb) !== '#')
+        ? '<a class="btn of-fb" href="' + esc(it.fb) + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg> شوف العرض على فيسبوك</a>'
+        : '';
+      return '<figure class="of-card" data-reveal>' +
+        '<div class="of-media gal-media">' + media + '</div>' +
+        '<figcaption class="of-cap">' +
+        '<h3>' + esc(it.title || '') + '</h3>' +
+        (it.desc ? '<div class="of-txt">' + esc(it.desc) + '</div>' : '') +
+        '<div class="of-btns">' +
+          '<button type="button" class="btn btn-primary of-order" data-i="' + i + '">🛒 اطلب العرض</button>' +
+          '<button type="button" class="btn btn-outline of-details" data-i="' + i + '">التفاصيل الكاملة</button>' +
+          fb +
+        '</div></figcaption></figure>';
+    }).join('');
+    // ربط أزرار كل بطاقة
+    qsa('#offersGrid .of-order').forEach(function (b) { b.addEventListener('click', function () { zhOpenOrder(Number(b.getAttribute('data-i'))); }); });
+    qsa('#offersGrid .of-details').forEach(function (b) { b.addEventListener('click', function () { zhOpenDetails(Number(b.getAttribute('data-i'))); }); });
+    observeReveal();
+  }
+  function zhModalOpen(html) {
+    var wrap = qs('#zhModalWrap'), card = qs('#zhModalCard');
+    if (!wrap || !card) return;
+    card.innerHTML = html;
+    wrap.classList.add('open');
+    wrap.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    // ربط إغلاق
+    qsa('#zhModalWrap [data-zhclose]').forEach(function (el) {
+      el.addEventListener('click', zhModalClose);
+    });
+    qsa('#zhModalWrap [data-zhorder]').forEach(function (el) {
+      el.addEventListener('click', function () { zhOpenOrder(Number(el.getAttribute('data-zhorder'))); });
+    });
+  }
+  function zhModalClose() {
+    var wrap = qs('#zhModalWrap');
+    if (wrap) { wrap.classList.remove('open'); wrap.setAttribute('aria-hidden', 'true'); }
+    document.body.style.overflow = '';
+  }
+  function zhModalHtml(inner) {
+    return '<button type="button" class="zh-x" data-zhclose="1" aria-label="إغلاق">✕</button>' + inner;
+  }
+  function zhOpenDetails(i) {
+    var items = (CUR && CUR.offers && CUR.offers.items) || [];
+    var it = items[i]; if (!it) return;
+    var media = (it.img && String(it.img).trim())
+      ? '<div class="zh-media"><img src="' + esc(it.img) + '" alt="' + esc(it.title || '') + '"></div>'
+      : '<div class="zh-media"></div>';
+    var det = esc(it.details || it.desc || '');
+    var fb = (it.fb && String(it.fb).trim() && String(it.fb) !== '#')
+      ? '<a class="btn of-fb" style="width:auto" href="' + esc(it.fb) + '" target="_blank" rel="noopener">شوف العرض على فيسبوك</a>' : '';
+    var html = zhModalHtml(media +
+      '<div class="zh-title">' + esc(it.title || '') + '</div>' +
+      '<span class="zh-tag">✨ عرض خاص</span>' +
+      '<div class="zh-body">' + det + '</div>' +
+      '<div class="zh-act">' +
+        '<button type="button" class="btn btn-primary" data-zhorder="' + i + '">🛒 اطلب هذا العرض</button>' +
+        fb +
+      '</div>');
+    zhModalOpen(html);
+  }
+  function zhOpenOrder(i) {
+    var items = (CUR && CUR.offers && CUR.offers.items) || [];
+    var it = items[i]; if (!it) return;
+    var title = it.title || 'العرض';
+    var html = zhModalHtml('<div class="zh-pad">' +
+      '<h3 style="font-size:1.3rem;font-weight:900;color:var(--ink);margin-bottom:4px">🛒 اطلب العرض</h3>' +
+      '<p style="color:#6f6250;font-size:.95rem;margin-bottom:16px">املأ بياناتك ورسالتك هتوصلك جاهزة على واتساب.</p>' +
+      '<div class="zf-note">⚠️ هتفتح لك نافذة واتساب فيها الطلب جاهز — اضغط إرسال وبس.</div>' +
+      '<div class="form-c"><label>العرض المطلوب</label><input class="fxd" type="text" id="zfOffer" value="' + esc(title) + '" readonly></div>' +
+      '<div class="form-c"><label>الاسم *</label><input type="text" id="zfName" placeholder="اكتب اسمك الكامل"></div>' +
+      '<div class="form-c"><label>رقم الهاتف *</label><input type="tel" id="zfPhone" placeholder="01xxxxxxxxx" dir="ltr" style="text-align:left"></div>' +
+      '<div class="form-c"><label>العنوان</label><input type="text" id="zfAddr" placeholder="المدينة - المنطقة - التفاصيل"></div>' +
+      '<div class="zf-err" id="zfErr"></div>' +
+      '<button type="button" class="btn btn-wa" id="zfSend" style="width:100%;padding:14px">إرسال الطلب عبر واتساب</button>' +
+      '</div>');
+    zhModalOpen(html);
+    var send = qs('#zfSend');
+    if (send) send.addEventListener('click', function () {
+      var name = qs('#zfName').value.trim();
+      var phone = qs('#zfPhone').value.replace(/[^0-9]/g, '');
+      var addr = qs('#zfAddr').value.trim();
+      var offer = (qs('#zfOffer').value || title).trim();
+      var err = qs('#zfErr');
+      if (!name) { err.textContent = 'اكتب اسمك من فضلك'; return; }
+      if (phone.length < 10) { err.textContent = 'اكتب رقم هاتف صحيح (11 رقم)'; return; }
+      err.textContent = '';
+      var brandName = (CUR && CUR.brand && CUR.brand.name) ? CUR.brand.name : 'مركز صيانة ذاكر حسين';
+      var msg = '📦 طلب عرض جديد — ' + brandName + '\n' +
+        'العرض المطلوب: ' + offer + '\n' +
+        'الاسم: ' + name + '\n' +
+        'رقم الهاتف: ' + phone + '\n' +
+        (addr ? 'العنوان: ' + addr + '\n' : '');
+      var phRaw = (CUR && CUR.contact && (CUR.contact.wa || CUR.contact.phone1)) || '01050006620';
+      var ph = String(phRaw).replace(/[^0-9]/g, '');
+      if (ph.indexOf('0') === 0) ph = '2' + ph; else if (ph.indexOf('2') !== 0) ph = '2' + ph;
+      var url = 'https://wa.me/' + ph + '?text=' + encodeURIComponent(msg);
+      var a = document.createElement('a');
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+      document.body.appendChild(a); a.click(); a.remove();
+      zhModalClose();
+    });
+  }
+  function zhBindEsc() {
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') zhModalClose(); });
+  }
+
   function setPhones(cfg) {
     var p1 = cfg.contact.phone1 || '', p2 = cfg.contact.phone2 || '';
     function put(a, n) {
@@ -448,6 +580,7 @@
      ========================================================= */
   function apply(cfg) {
     var c = cfg || {};
+    CUR = c;
     var colors = c.colors || {};
     var gold = colors.gold || '#F4BA35', brand = colors.brand || '#B30906', dark = colors.dark || '#0C0A06';
     var rs = document.documentElement.style;
@@ -528,6 +661,8 @@
     if (icta) icta.innerHTML = '💳 <b>' + esc(im.ctaB || '') + '</b>' + esc(im.ctaTail || '');
     var g = c.gallery || {};
     setTxt(qs('#gEyebrow'), g.eyebrow || ''); setTxt(qs('#gTitle'), g.title || ''); setTxt(qs('#gSub'), g.sub || '');
+    var of = c.offers || {};
+    setTxt(qs('#oEyebrow'), of.eyebrow || ''); setTxt(qs('#oTitle'), of.title || ''); setTxt(qs('#oSub'), of.sub || '');
     var lc = c.location || {};
     setTxt(qs('#lEyebrow'), lc.eyebrow || ''); setTxt(qs('#locTitle'), lc.title || '');
     setTxt(qs('#locSub'), lc.sub || '');
@@ -535,7 +670,7 @@
     setTxt(qs('#ctaTitle'), ct.title || ''); setTxt(qs('#ctaP'), ct.p || '');
 
     /* ---- المحتوى الديناميكي ---- */
-    renderServices(c); renderWhy(c); renderInst(c); renderGallery(c); renderStrip(c); renderBanner(c);
+    renderServices(c); renderWhy(c); renderInst(c); renderGallery(c); renderOffers(c); renderStrip(c); renderBanner(c);
 
     /* ---- جهات الاتصال ---- */
     setPhones(c);
@@ -554,7 +689,7 @@
     setTxt(qs('#madeByTxt'), (c.footer || {}).madeBy || '');
 
     /* ---- إظهار/إخفاء الأقسام ---- */
-    var secs = { strip: '.strip', services: '#services', why: '#why', inst: '#installments', gallery: '#gallery', location: '#location', cta: '#contact' };
+    var secs = { strip: '.strip', services: '#services', offers: '#offers', why: '#why', inst: '#installments', gallery: '#gallery', location: '#location', cta: '#contact' };
     Object.keys(secs).forEach(function (k) {
       var el = qs(secs[k]);
       if (el) el.style.display = (c.show && c.show[k] === false) ? 'none' : '';
@@ -568,6 +703,7 @@
   var root = null;
   var activeTab = 'data';
   var cur = null;
+  var CUR = null;
 
   function fieldHtml(fk, label, value, type, hint) {
     type = type || 'text';
@@ -603,7 +739,8 @@
     { id: 'edWhy', fk: 'why.items', title: 'نقاط لماذا نحن', cols: [['title', 'العنوان', 'text'], ['desc', 'الوصف', 'area']], icon: true },
     { id: 'edInst', fk: 'inst.items', title: 'شركات التقسيط', cols: [['main', 'اسم الشركة', 'text'], ['sub', 'اسم إضافي (اختياري)', 'text']], icon: false },
     { id: 'edGal', fk: 'gallery.items', title: 'صور المعرض', cols: [['title', 'عنوان الصورة', 'text'], ['img', 'رابط الصورة', 'text']], icon: false, upload: true },
-    { id: 'edStrip', fk: 'strip.items', title: 'عناصر شريط المميزات', cols: [['t', 'النص الرئيسي', 'text'], ['s', 'النص الصغير', 'text']], icon: true }
+    { id: 'edStrip', fk: 'strip.items', title: 'عناصر شريط المميزات', cols: [['t', 'النص الرئيسي', 'text'], ['s', 'النص الصغير', 'text']], icon: true },
+    { id: 'edOffers', fk: 'offers.items', title: 'العروض', single: true, upload: true, cols: [['title', 'اسم العرض', 'text'], ['desc', 'وصف مختصر يظهر في البطاقة', 'area'], ['details', 'التفاصيل الكاملة (تظهر في نافذة التفاصيل)', 'area'], ['img', 'رابط صورة العرض', 'text'], ['fb', 'رابط عرض الفيسبوك (زر شوف على فيسبوك)', 'text']] }
   ];
 
   function rowHtml(def, it, idx) {
@@ -618,10 +755,11 @@
     });
     var icon = (def.icon && it && it.icon) ? it.icon : '';
     var up = (def.upload) ? '<div class="row-upload"><button type="button" class="ed-add row-up">📤 رفع صورة من جهازك</button><span class="up-st"></span></div>' : '';
+    var bodyWrap = def.single ? '<div class="fcolwrap">' + cols + '</div>' : '<div class="two">' + cols + '</div>';
     return '<div class="ed-row" data-idx="' + idx + '">' +
       '<button type="button" class="del" title="حذف">✕</button>' +
       (def.icon ? '<input type="hidden" data-col="icon" value="' + esc(icon) + '">' : '') +
-      '<div class="two">' + cols + '</div>' + up + '</div>';
+      bodyWrap + up + '</div>';
   }
   function buildEditors(cfg) {
     LIST_DEFS.forEach(function (def) {
@@ -694,7 +832,7 @@
   function tabsHtml() {
     var tabs = [
       ['data', 'بيانات أساسية'], ['hero', 'الواجهة'], ['services', 'الخدمات'],
-      ['why', 'لماذا نحن'], ['inst', 'التقسيط'], ['promo', 'الإعلانات والشرائط'],
+      ['why', 'لماذا نحن'], ['inst', 'التقسيط'], ['offers', 'العروض 🔥'], ['promo', 'الإعلانات والشرائط'],
       ['gallery', 'المعرض'], ['loc', 'الموقع والخريطة'], ['appear', 'الألوان والأقسام'],
       ['sec', 'الأمان'], ['foot', 'الفوتر']
     ];
@@ -793,6 +931,14 @@
         fieldHtml('inst.ctaTail', 'الجزء التكميلي', cfg.inst.ctaTail) +
         '<h4 class="sec">شركات التقسيط</h4><div id="edInst"></div>'
       },
+      { id: 'offers', html:
+        '<h4 class="sec">عنوان قسم العروض (على الموقع)</h4>' +
+        fieldHtml('offers.eyebrow', 'الشارة', cfg.offers.eyebrow) +
+        fieldHtml('offers.title', 'عنوان القسم', cfg.offers.title) +
+        fieldHtml('offers.sub', 'الوصف', cfg.offers.sub, 'area') +
+        '<div class="f-row"><div class="hint">🔥 <b>إزاي القسم شغال؟</b> كل عرض له: صورة، وصف مختصر في البطاقة، تفاصيل كاملة (تظهر في نافذة "التفاصيل الكاملة")، رابط فيسبوك (زر "شوف العرض على فيسبوك"). زر "اطلب العرض" بيفتح نموذج (اسم + هاتف + عنوان) ويرسلها واتساب للرقم الموجود في تبويب "بيانات أساسية".</div></div>' +
+        '<div id="edOffers"></div>'
+      },
       { id: 'promo', html:
         '<h4 class="sec">🎁 بنر العروض المتحرك (أعلى الموقع)</h4>' +
         fieldHtml('banner.show', 'إظهار البنر', cfg.banner.show !== false, 'chk') +
@@ -837,6 +983,7 @@
         fieldHtml('colors.dark', 'الخلفيات الداكنة', cfg.colors.dark, 'color') +
         '<h4 class="sec">إظهار / إخفاء الأقسام</h4>' +
         fieldHtml('show.strip', 'شريط المميزات', cfg.show.strip !== false, 'chk') +
+        fieldHtml('show.offers', 'قسم العروض 🔥', cfg.show.offers !== false, 'chk') +
         fieldHtml('show.services', 'قسم الخدمات', cfg.show.services !== false, 'chk') +
         fieldHtml('show.why', 'قسم لماذا نحن', cfg.show.why !== false, 'chk') +
         fieldHtml('show.inst', 'قسم التقسيط', cfg.show.inst !== false, 'chk') +
@@ -1032,6 +1179,7 @@
   }
   function boot() {
     try {
+      zhBindEsc();
       root = qs('#adminRoot');
       armSecret();
       cur = localCfg();
